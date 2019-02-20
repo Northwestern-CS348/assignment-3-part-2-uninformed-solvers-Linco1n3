@@ -103,7 +103,7 @@ class GameMaster(object):
     def getMovables(self):
         """
         Returns a list of MOVABLE statements that represent the moves currently available.
-
+        
         The output Statements will be sorted in ascending orders, first order by the text of predicates,
         then by each Term in the Statement.
 
