@@ -15,15 +15,19 @@ Example:
 fact: (pred obj1 obj2)
 rule: ((pred obj1 obj2) (pred obj2 obj3)) -> (pred obj1 obj3)
 
+
 """
+
+
 fact: (on disk1 peg1)
 fact: (on disk2 peg1)
 fact: (on disk3 peg1)
 
-fact: (above disk2 disk3)
 fact: (above disk1 disk2)
+fact: (above disk2 disk3)
 
 fact: (ontop disk1 peg1)
+
 fact: (empty peg2)
 fact: (empty peg3)
 
@@ -32,4 +36,5 @@ fact: (larger disk3 disk2)
 
 rule: ((larger ?x ?y) (larger ?y ?z)) -> (larger ?x ?z)
 rule: ((ontop ?d1 ?p1) (ontop ?d2 ?p2) (larger ?d2 ?d1) -> (movable ?d1 ?p1 ?p2)
-rule: ((empty ?p1) (ontop ?d2 ?p2) (on ?d2 ?p2)) -> (movable ?d2 ?p2 ?p1)
+rule: ((ontop ?d1 ?p1) (empty ?p2)) -> (movable ?d1 ?p1 ?p2)
+

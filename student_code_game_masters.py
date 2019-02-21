@@ -76,38 +76,48 @@ class TowerOfHanoiGame(GameMaster):
         """
 
         ### Student code goes here
-        movableQuery = self.produceMovableQuery()
-        checkismatch = match(movable_statement, movableQuery.statement)
+        #movableQuery = self.produceMovableQuery()
+        #checkismatch = match(movable_statement, movableQuery.statement)
 
         # fact: (movable ?disk ?init ?target)
-        if checkismatch:
-            curr_disk = checkismatch['?disk']
-            curr_init = checkismatch['?init']
-            curr_target = checkismatch['?target']
+        #if checkismatch:
+        curr_disk = str(movable_statement.terms[0])
+        curr_init = str(movable_statement.terms[1])
+        curr_target = str(movable_statement.terms[2])
 
-            # retract facts supported by facts of curr_disk
-            self.kb.kb_retract(parse_input('fact: (ontop ' + curr_disk + ' ' + curr_init + ')'))
-            self.kb.kb_retract(parse_input('fact: (on ' + curr_disk + ' ' + curr_init + ')'))
+        # retract facts supported by facts of curr_disk
+        self.kb.kb_retract(parse_input('fact: (ontop ' + curr_disk + ' ' + curr_init + ')'))
+        self.kb.kb_assert(parse_input('fact: (on ' + curr_disk + ' ' + curr_target + ')'))
+        self.kb.kb_retract(parse_input('fact: (on ' + curr_disk + ' ' + curr_init + ')'))
 
-            # check whether curr_disk is above another disk
-            checkisabove = self.kb.kb_ask(parse_input('fact: (above ' + curr_disk + ' ?disk)'))
-            if checkisabove:
-                new_top = checkisabove[0].bindings_dict['?disk']
-                self.kb.kb_retract(parse_input('fact: (above ' + curr_disk + ' ' + new_top + ')'))
-                self.kb.kb_assert(parse_input('fact: (ontop ' + new_top + ' ' + curr_init + ')'))
-            else:
-                self.kb.kb_assert(parse_input('fact: (empty ' + curr_init + ')'))
+        # check whether curr_disk is above another disk
+        checkisabove = self.kb.kb_ask(parse_input('fact: (above ' + curr_disk + ' ?disk)'))
+        if checkisabove:
+            new_top = checkisabove[0]['?disk']
+            self.kb.kb_retract(parse_input('fact: (above ' + curr_disk + ' ' + new_top + ')'))
+            self.kb.kb_assert(parse_input('fact: (ontop ' + new_top + ' ' + curr_init + ')'))
+        else:
+            self.kb.kb_assert(parse_input('fact: (empty ' + curr_init + ')'))
 
-            # check whether curr_target is empty
-            checkisempty = self.kb.kb_ask(parse_input('fact: (empty ' + curr_target + ')'))
-            if checkisempty:
-                self.kb.kb_retract(parse_input('fact: (empty ' + curr_target + ')'))
-                self.kb.kb_assert(parse_input('fact: (ontop ' + curr_disk + ' ' + curr_target + ')'))
-                self.kb.kb_assert(parse_input('fact: (on ' + curr_disk + ' ' + curr_target + ')'))
-            else:
-                old_top = self.kb.kb_ask(parse_input('fact: (ontop ?disk ' + curr_target + ')'))[0].bindings_dict['?disk']
-                self.kb.kb_retract(parse_input('fact: (ontop ' + old_top + ' ' + curr_target + ')'))
-                self.kb.kb_assert(parse_input('fact: (on ' + curr_disk + ' ' + curr_target + ')'))
+        # check whether curr_target is empty
+        #checkisempty = self.kb.kb_ask(parse_input('fact: (empty ' + curr_target + ')'))
+        #if checkisempty:
+            #self.kb.kb_retract(parse_input('fact: (empty ' + curr_target + ')'))
+            #self.kb.kb_assert(parse_input('fact: (ontop ' + curr_disk + ' ' + curr_target + ')'))
+            #self.kb.kb_assert(parse_input('fact: (on ' + curr_disk + ' ' + curr_target + ')'))
+        #else:
+            #old_top = self.kb.kb_ask(parse_input('fact: (ontop ?disk ' + curr_target + ')'))[0].bindings_dict['?disk']
+            #self.kb.kb_retract(parse_input('fact: (ontop ' + old_top + ' ' + curr_target + ')'))
+            #self.kb.kb_assert(parse_input('fact: (on ' + curr_disk + ' ' + curr_target + ')'))
+        checkisempty = self.kb.kb_ask(parse_input('fact: (ontop ?disk ' + curr_target + ')'))
+        if checkisempty:
+            old_top = checkisempty[0]['?disk']
+            self.kb.kb_retract(parse_input('fact: (ontop ' + old_top + ' ' +curr_target + ')'))
+            self.kb.kb_assert(parse_input('fact: (ontop ' + curr_disk + ' ' + curr_target + ')'))
+            self.kb.kb_assert(parse_input('fact: (above ' + curr_disk + ' ' + old_top + ')'))
+        else:
+            self.kb.kb_retract(parse_input('fact: (empty '+ curr_target + ')'))
+            self.kb.kb_assert(parse_input('fact: (ontop '+ curr_disk + ' ' + curr_target + ')'))
 
     def reverseMove(self, movable_statement):
         """
@@ -183,22 +193,22 @@ class Puzzle8Game(GameMaster):
             None
         """
         ### Student code goes here
-        movableQuery = self.produceMovableQuery()
-        checkismatch = match(movable_statement, movableQuery.statement)
+        #movableQuery = self.produceMovableQuery()
+        #checkismatch = match(movable_statement, movableQuery.statement)
 
         #fact: (movable ?piece ?initX ?initY ?targetX ?targetY)
-        if checkismatch:
-            tile = str(movable_statement.terms[0])
-            initX = str(movable_statement.terms[1])
-            initY = str(movable_statement.terms[2])
-            targetX = str(movable_statement.terms[3])
-            targetY = str(movable_statement.terms[4])
+        #if checkismatch:
+        tile = str(movable_statement.terms[0])
+        initX = str(movable_statement.terms[1])
+        initY = str(movable_statement.terms[2])
+        targetX = str(movable_statement.terms[3])
+        targetY = str(movable_statement.terms[4])
 
-            self.kb.kb_retract(parse_input('fact: (pos empty ' + targetX + ' ' + targetY + ')'))
-            self.kb.kb_retract(parse_input('fact: (pos ' + tile + ' ' + initX + ' ' + initY + ')'))
+        self.kb.kb_retract(parse_input('fact: (pos empty ' + targetX + ' ' + targetY + ')'))
+        self.kb.kb_retract(parse_input('fact: (pos ' + tile + ' ' + initX + ' ' + initY + ')'))
 
-            self.kb.kb_assert(parse_input('fact: (pos empty ' + initX + ' ' + initY + ')'))
-            self.kb.kb_assert(parse_input('fact: (pos ' + tile + ' ' + targetX + ' ' + targetY + ')'))
+        self.kb.kb_assert(parse_input('fact: (pos empty ' + initX + ' ' + initY + ')'))
+        self.kb.kb_assert(parse_input('fact: (pos ' + tile + ' ' + targetX + ' ' + targetY + ')'))
     def reverseMove(self, movable_statement):
         """
         See overridden parent class method for more information.
